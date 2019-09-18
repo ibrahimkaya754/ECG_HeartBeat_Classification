@@ -1,8 +1,8 @@
 # ECG_HeartBeat_Classification
 Forked from "https://github.com/SajadMo/ECG-Heartbeat-Classification-seq2seq-model", very special thanks to SajadMousavi
 
-## Recruitments
-* Python 2.7
+## Requirements
+* Python version >= 3.5 (Although Python 2.7 is given in the original requirements, it is not working)
 * tensorflow/tensorflow-gpu
 * numpy
 * scipy
