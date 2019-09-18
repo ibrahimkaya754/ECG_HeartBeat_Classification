@@ -208,7 +208,7 @@ def main():
     parser.add_argument('--max_time', type=int, default=10)
     parser.add_argument('--test_steps', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=20)
-    parser.add_argument('--data_dir', type=str, default='data/s2s_mitbih_aami')
+    parser.add_argument('--data_dir', type=str, default='/media/veracrypt1/Data/SignalProcessing/s2s_mitbih_aami')
     parser.add_argument('--bidirectional', type=str2bool, default=str2bool('False'))
     # parser.add_argument('--lstm_layers', type=int, default=2)
     parser.add_argument('--num_units', type=int, default=128)

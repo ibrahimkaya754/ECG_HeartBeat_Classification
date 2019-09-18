@@ -222,7 +222,7 @@ def main():
     parser.add_argument('--max_time', type=int, default=10)
     parser.add_argument('--test_steps', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=20)
-    parser.add_argument('--data_dir', type=str, default='data/s2s_mitbih_aami_DS1DS2')
+    parser.add_argument('--data_dir', type=str, default='/media/veracrypt1/Data/SignalProcessing/s2s_mitbih_aami_DS1DS2')
     parser.add_argument('--bidirectional', type=str2bool, default=str2bool('False'))
     # parser.add_argument('--lstm_layers', type=int, default=2)
     parser.add_argument('--num_units', type=int, default=128)
@@ -400,49 +400,49 @@ def run_program(args):
         print(str(datetime.now()))
         pre_acc_avg = 0.0
         ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
-        if ckpt and ckpt.model_checkpoint_path:
-            # # Restore
-            ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
-            # saver.restore(session, os.path.join(checkpoint_dir, ckpt_name))
-            saver.restore(sess, tf.train.latest_checkpoint(checkpoint_dir))
-            # or 'load meta graph' and restore weights
-            # saver = tf.train.import_meta_graph(ckpt_name+".meta")
-            # saver.restore(session,tf.train.latest_checkpoint(checkpoint_dir))
-            test_model()
-        else:
+        # if ckpt and ckpt.model_checkpoint_path:
+        #     # # Restore
+        #     ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
+        #     # saver.restore(session, os.path.join(checkpoint_dir, ckpt_name))
+        #     saver.restore(sess, tf.train.latest_checkpoint(checkpoint_dir))
+        #     # or 'load meta graph' and restore weights
+        #     # saver = tf.train.import_meta_graph(ckpt_name+".meta")
+        #     # saver.restore(session,tf.train.latest_checkpoint(checkpoint_dir))
+        #     test_model()
+        # else:
 
-            for epoch_i in range(epochs):
-                start_time = time.time()
-                train_acc = []
-                for batch_i, (source_batch, target_batch) in enumerate(batch_data(X_train, y_train, batch_size)):
-                    _, batch_loss, batch_logits = sess.run([optimizer, loss, logits],
-                        feed_dict = {inputs: source_batch,
-                                     dec_inputs: target_batch[:, :-1],
-                                     targets: target_batch[:, 1:]})
-                    loss_track.append(batch_loss)
-                    train_acc.append(batch_logits.argmax(axis=-1) == target_batch[:,1:])
+        for epoch_i in range(epochs):
+            start_time = time.time()
+            train_acc = []
+            for batch_i, (source_batch, target_batch) in enumerate(batch_data(X_train, y_train, batch_size)):
+                _, batch_loss, batch_logits = sess.run([optimizer, loss, logits],
+                    feed_dict = {inputs: source_batch,
+                                    dec_inputs: target_batch[:, :-1],
+                                    targets: target_batch[:, 1:]})
+                loss_track.append(batch_loss)
+                train_acc.append(batch_logits.argmax(axis=-1) == target_batch[:,1:])
 
-                accuracy = np.mean(train_acc)
-                print('Epoch {:3} Loss: {:>6.3f} Accuracy: {:>6.4f} Epoch duration: {:>6.3f}s'.format(epoch_i, batch_loss,
-                                                                                  accuracy, time.time() - start_time))
+            accuracy = np.mean(train_acc)
+            print('Epoch {:3} Loss: {:>6.3f} Accuracy: {:>6.4f} Epoch duration: {:>6.3f}s'.format(epoch_i, batch_loss,
+                                                                                accuracy, time.time() - start_time))
 
-                if epoch_i%test_steps==0:
-                    acc_avg, acc, sensitivity, specificity, PPV= test_model()
+            if epoch_i%test_steps==0:
+                acc_avg, acc, sensitivity, specificity, PPV= test_model()
 
-                    print('loss {:.4f} after {} epochs (batch_size={})'.format(loss_track[-1], epoch_i + 1, batch_size))
-                    save_path = os.path.join(checkpoint_dir, ckpt_name)
-                    saver.save(sess, save_path)
-                    print("Model saved in path: %s" % save_path)
+                print('loss {:.4f} after {} epochs (batch_size={})'.format(loss_track[-1], epoch_i + 1, batch_size))
+                save_path = os.path.join(checkpoint_dir, ckpt_name)
+                saver.save(sess, save_path)
+                print("Model saved in path: %s" % save_path)
 
-                    # if np.nan_to_num(acc_avg) > pre_acc_avg:  # save the better model based on the f1 score
-                    #     print('loss {:.4f} after {} epochs (batch_size={})'.format(loss_track[-1], epoch_i + 1, batch_size))
-                    #     pre_acc_avg = acc_avg
-                    #     save_path =os.path.join(checkpoint_dir, ckpt_name)
-                    #     saver.save(sess, save_path)
-                    #     print("The best model (till now) saved in path: %s" % save_path)
+                # if np.nan_to_num(acc_avg) > pre_acc_avg:  # save the better model based on the f1 score
+                #     print('loss {:.4f} after {} epochs (batch_size={})'.format(loss_track[-1], epoch_i + 1, batch_size))
+                #     pre_acc_avg = acc_avg
+                #     save_path =os.path.join(checkpoint_dir, ckpt_name)
+                #     saver.save(sess, save_path)
+                #     print("The best model (till now) saved in path: %s" % save_path)
 
-            plt.plot(loss_track)
-            plt.show()
+        plt.plot(loss_track)
+        plt.show()
         print(str(datetime.now()))
 
         # test_model()

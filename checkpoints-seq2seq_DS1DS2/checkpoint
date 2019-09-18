@@ -1,0 +1,2 @@
+model_checkpoint_path: "seq2seq_mitbih_DS1DS2.ckpt"
+all_model_checkpoint_paths: "seq2seq_mitbih_DS1DS2.ckpt"
